@@ -31,10 +31,6 @@ train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=8, shuffle=
 test_dataset = torch.utils.data.TensorDataset(test_feats, test_labels)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=8, shuffle=False)
 
-train_dataset = train_dataset.to(device)
-train_loader = train_loader.to(device)
-test_dataset = test_dataset.to(device)
-test_loader = test_loader.to(device)
 
 # Define the model architecture
 class MyModel(nn.Module):
