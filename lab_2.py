@@ -89,6 +89,7 @@ try :
     model.load_state_dict(torch.load('model.pt'))
     model.eval()
     modeltrained = True
+    print('Model loaded')
 except:
     print('No model found')
     pass
@@ -116,6 +117,11 @@ def train_network(model, train_loader, criterion, optimizer):
         print(time2 - time1)
         test_network(model, test_loader)
 
+
+label_acc = {}
+
+missclassifications = {}
+
 def test_network(model, test_loader):
     correct = 0
     total = 0
@@ -127,6 +133,22 @@ def test_network(model, test_loader):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            for i in range(len(labels)):
+                if labels[i].item() not in label_acc:
+                    label_acc[labels[i].item()] = [0, 0]
+                label_acc[labels[i].item()][1] += 1
+                if predicted[i] == labels[i]:
+                    label_acc[labels[i].item()][0] += 1
+                else:
+                    if labels[i].item() not in missclassifications:
+                        missclassifications[labels[i].item()] = {}
+                    if predicted[i].item() not in missclassifications[labels[i].item()]:
+                        missclassifications[labels[i].item()][predicted[i].item()] = 0
+                    missclassifications[labels[i].item()][predicted[i].item()] += 1
+
+
+                
+                
     print('Test accuracy: %d %%' % (100 * correct / total))
 
 if not modeltrained:
@@ -138,6 +160,30 @@ if not modeltrained:
     print('Finished Training')
     torch.save(model.state_dict(), 'model.pt')
 
-
 test_network(model, test_loader)
 
+# sort by accuracy
+sorted_acc = sorted(label_acc.items(), key=lambda x: x[1][0] / x[1][1], reverse=True)
+
+print("Top 3 most accurate phones:")
+for i in range(3):
+    print(phone_labels[sorted_acc[i][0]], sorted_acc[i][1][0] / sorted_acc[i][1][1])
+
+print("Top 3 least accurate phones:")
+
+for i in range(1, 4):
+    print(phone_labels[sorted_acc[-i][0]], sorted_acc[-i][1][0] / sorted_acc[-i][1][1])
+
+# print(missclassifications)
+
+common_missclassifications = []
+
+common_missclassifications.append(np.where(phone_labels == 'sh')[0][0])
+common_missclassifications.append(np.where(phone_labels == 'p')[0][0])
+common_missclassifications.append(np.where(phone_labels == 'm')[0][0])
+common_missclassifications.append(np.where(phone_labels == 'r')[0][0])
+common_missclassifications.append(np.where(phone_labels == 'ae')[0][0])
+
+for i in common_missclassifications:
+    sorted_miss = sorted(missclassifications[i].items(), key=lambda x: x[1], reverse=True)
+    print(phone_labels[i], "is commonly misclassified as:", phone_labels[sorted_miss[0][0]], "with", sorted_miss[0][1], "instances")
