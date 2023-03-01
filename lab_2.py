@@ -165,13 +165,13 @@ test_network(model, test_loader)
 # sort by accuracy
 sorted_acc = sorted(label_acc.items(), key=lambda x: x[1][0] / x[1][1], reverse=True)
 
-print("Top 3 most accurate phones:")
-for i in range(3):
+print("Top 5 most accurate phones:")
+for i in range(5):
     print(phone_labels[sorted_acc[i][0]], sorted_acc[i][1][0] / sorted_acc[i][1][1])
 
-print("Top 3 least accurate phones:")
+print("Top 5 least accurate phones:")
 
-for i in range(1, 4):
+for i in range(1, 6):
     print(phone_labels[sorted_acc[-i][0]], sorted_acc[-i][1][0] / sorted_acc[-i][1][1])
 
 # print(missclassifications)
