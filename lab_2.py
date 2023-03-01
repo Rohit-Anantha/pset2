@@ -84,6 +84,14 @@ class MyModel(nn.Module):
     
 # Instantiate the model, loss function, and optimizer
 model = MyModel()
+modeltrained = False
+try :
+    model.load_state_dict(torch.load('model.pt'))
+    model.eval()
+    modeltrained = True
+except:
+    print('No model found')
+    pass
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
@@ -121,15 +129,15 @@ def test_network(model, test_loader):
             correct += (predicted == labels).sum().item()
     print('Test accuracy: %d %%' % (100 * correct / total))
 
-time1 = time.time()
+if not modeltrained:
+    print('Training model')
+    time1 = time.time()
+    train_network(model, train_loader, criterion, optimizer)
+    time2 = time.time()
+    print(time2 - time1)
+    print('Finished Training')
+    torch.save(model.state_dict(), 'model.pt')
 
-train_network(model, train_loader, criterion, optimizer)
-
-time2 = time.time()
-
-print(time2 - time1)
-
-print('Finished Training')
 
 test_network(model, test_loader)
 
