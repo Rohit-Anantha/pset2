@@ -7,6 +7,9 @@
 5. Repeat the previous question for the ’p’, ’m’, ’r’, and ’ae’ phoneme classes.
 
 p: b, and this makes sense as puh and buh are very similar, pave, brave, etc sound similar at the start depending on how you say them
+
 m: ng, this was a little less sense, but if you are in the middle of a word a m sound could be similar
+
 r: er, this makes a lot of sense, as it it just a different version
+
 ae: eh, these are very similar, just based on length
